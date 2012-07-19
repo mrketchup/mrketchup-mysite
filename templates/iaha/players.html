@@ -1,0 +1,5 @@
+<ul>
+{% for p in players %}
+    <li><a href="/iaha/player/{{ p.id }}/">{{ p.full_name }}</a></li>
+{% endfor %}
+</ul>

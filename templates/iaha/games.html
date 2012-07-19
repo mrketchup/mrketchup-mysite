@@ -1,0 +1,16 @@
+<ul>
+{% for g in gamespre2007 %}
+    <li><a href="/iaha/gamepre2007/{{ g.id }}/">{{ g }}</a>
+    ({{ g.p1_gf }} - {{ g.p2_gf }})</li>
+{% endfor %}
+
+{% for g in gamespre2010 %}
+    <li><a href="/iaha/gamepre2010/{{ g.id }}/">{{ g }}</a>
+    ({{ g.p1_gf }} - {{ g.p2_gf }})</li>
+{% endfor %}
+
+{% for g in game %}
+    <li><a href="/iaha/game/{{ g.id }}/">{{ g }}</a>
+    ({{ g.p1_gf }} - {{ g.p2_gf }})</li>
+{% endfor %}
+</ul>

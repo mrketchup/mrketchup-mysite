@@ -1,0 +1,265 @@
+<h1>{{ player.full_name }}</h1>
+
+<p><b>Handedness:</b> {{ player.get_hand_display }}
+
+<br/><b>Born:</b>
+{% if player.birth_date %}
+{{ player.birth_date }}
+{% else %}
+???
+{% endif %}
+
+{% if player.death_date %}
+<br/><b>Died:</b> {{ player.death_date }}
+{% endif %}
+
+(Age: {{ player.age }})
+</p>
+
+<h3>Regular Season</h3>
+<p>
+{% for season in stats %}
+	<table border="1">
+	<tr>
+		<th>Year</th>
+		<th>Lg</th>
+		<th>Age</th>
+		<th>G</th>
+		<th>W</th>
+		<th>L</th>
+		<th>WPct</th>
+		<th>GF</th>
+		<th>GS</th>
+		<th>GA</th>
+		<th>GO</th>
+		<th>OG</th>
+		<th>GF/G</th>
+		<th>GS/G</th>
+		<th>GA/G</th>
+		<th>GO/G</th>
+		<th>OG/G</th>
+		<th>A</th>
+		<th>AO</th>
+	</tr>
+	<tr>
+		<td>{{ season.season.year }}</td>
+		<td>{{ season.league }}</td>
+		<td>{{ season.age }}</td>
+		<td>{{ season.g }}</td>
+		<td>{{ season.w }}</td>
+		<td>{{ season.l }}</td>
+		<td>{{ season.wpct }}</td>
+		<td>{{ season.gf }}</td>
+		<td>{{ season.gs }}</td>
+		<td>{{ season.ga }}</td>
+		<td>{{ season.go }}</td>
+		<td>{{ season.og }}</td>
+		<td>{{ season.gfg }}</td>
+		<td>{{ season.gsg }}</td>
+		<td>{{ season.gag }}</td>
+		<td>{{ season.gog }}</td>
+		<td>{{ season.ogg }}</td>
+		<td>{{ season.a }}</td>
+		<td>{{ season.ao }}</td>
+	</tr>
+	</table>
+	{% for week in season.week_stats %}
+		<table border="1">
+		<tr>
+			<th>Week</th>
+			<th>G</th>
+			<th>W</th>
+			<th>L</th>
+			<th>WPct</th>
+			<th>GF</th>
+			<th>GS</th>
+			<th>GA</th>
+			<th>GO</th>
+			<th>OG</th>
+			<th>GF/G</th>
+			<th>GS/G</th>
+			<th>GA/G</th>
+			<th>GO/G</th>
+			<th>OG/G</th>
+			<th>A</th>
+			<th>AO</th>
+		</tr>
+		<tr>
+			<td>{{ week.week.week_num }}</td>
+			<td>{{ week.g }}</td>
+			<td>{{ week.w }}</td>
+			<td>{{ week.l }}</td>
+			<td>{{ week.wpct }}</td>
+			<td>{{ week.gf }}</td>
+			<td>{{ week.gs }}</td>
+			<td>{{ week.ga }}</td>
+			<td>{{ week.go }}</td>
+			<td>{{ week.og }}</td>
+			<td>{{ week.gfg }}</td>
+			<td>{{ week.gsg }}</td>
+			<td>{{ week.gag }}</td>
+			<td>{{ week.gog }}</td>
+			<td>{{ week.ogg }}</td>
+			<td>{{ week.a }}</td>
+			<td>{{ week.ao }}</td>
+		</tr>
+		</table>
+		<table border="1">
+		<tr>
+			<th>W/L</th>
+			<th>Opp</th>
+			<th>GF</th>
+			<th>GS</th>
+			<th>GA</th>
+			<th>GO</th>
+			<th>OG</th>
+			<th>OGO</th>
+			<th>A</th>
+			<th>AO</th>
+		</tr>
+		{% for game in week.game_stats %}
+			<tr>
+				{% if season.season.year < 2007 %}
+					<td><a href="/iaha/gamepre2007/{{ game.game.id }}/">{{ game.outcome }}</a></td>
+				{% else %}
+					{% if week.week.season.year < 2010 %}
+						<td><a href="/iaha/gamepre2010/{{ game.game.id }}/">{{ game.outcome }}</a></td>
+					{% else %}
+						<td><a href="/iaha/game/{{ game.game.id }}/">{{ game.outcome }}</a></td>
+					{% endif %}
+				{% endif %}
+				<td><a href="/iaha/player/{{ game.opponent.id }}/">{{ game.opponent }}</a></td>
+				<td>{{ game.gf }}</td>
+				<td>{{ game.gs }}</td>
+				<td>{{ game.ga }}</td>
+				<td>{{ game.go }}</td>
+				<td>{{ game.og }}</td>
+				<td>{{ game.ogo }}</td>
+				<td>{{ game.a }}</td>
+				<td>{{ game.ao }}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	{% endfor %}
+{% endfor %}
+</p>
+
+{% if ps_stats|length > 0 %}<h3>Post Season</h3>{% endif %}
+<p>
+{% for season in ps_stats %}
+	<table border="1">
+	<tr>
+		<th>Year</th>
+		<th>G</th>
+		<th>W</th>
+		<th>L</th>
+		<th>WPct</th>
+		<th>GF</th>
+		<th>GS</th>
+		<th>GA</th>
+		<th>GO</th>
+		<th>OG</th>
+		<th>GF/G</th>
+		<th>GS/G</th>
+		<th>GA/G</th>
+		<th>GO/G</th>
+		<th>OG/G</th>
+		<th>A</th>
+		<th>AO</th>
+	</tr>
+	<tr>
+		<td>{{ season.season.season.year }}</td>
+		<td>{{ season.g }}</td>
+		<td>{{ season.w }}</td>
+		<td>{{ season.l }}</td>
+		<td>{{ season.wpct }}</td>
+		<td>{{ season.gf }}</td>
+		<td>{{ season.gs }}</td>
+		<td>{{ season.ga }}</td>
+		<td>{{ season.go }}</td>
+		<td>{{ season.og }}</td>
+		<td>{{ season.gfg }}</td>
+		<td>{{ season.gsg }}</td>
+		<td>{{ season.gag }}</td>
+		<td>{{ season.gog }}</td>
+		<td>{{ season.ogg }}</td>
+		<td>{{ season.a }}</td>
+		<td>{{ season.ao }}</td>
+	</tr>
+	</table>
+	{% for series in season.series_stats %}
+		<table border="1">
+		<tr>
+			<th>Series</th>
+			<th>G</th>
+			<th>W</th>
+			<th>L</th>
+			<th>WPct</th>
+			<th>GF</th>
+			<th>GS</th>
+			<th>GA</th>
+			<th>GO</th>
+			<th>OG</th>
+			<th>GF/G</th>
+			<th>GS/G</th>
+			<th>GA/G</th>
+			<th>GO/G</th>
+			<th>OG/G</th>
+			<th>A</th>
+			<th>AO</th>
+		</tr>
+		<tr>
+			<td>{{ series.series }}</td>
+			<td>{{ series.g }}</td>
+			<td>{{ series.w }}</td>
+			<td>{{ series.l }}</td>
+			<td>{{ series.wpct }}</td>
+			<td>{{ series.gf }}</td>
+			<td>{{ series.gs }}</td>
+			<td>{{ series.ga }}</td>
+			<td>{{ series.go }}</td>
+			<td>{{ series.og }}</td>
+			<td>{{ series.gfg }}</td>
+			<td>{{ series.gsg }}</td>
+			<td>{{ series.gag }}</td>
+			<td>{{ series.gog }}</td>
+			<td>{{ series.ogg }}</td>
+			<td>{{ series.a }}</td>
+			<td>{{ series.ao }}</td>
+		</tr>
+		</table>
+		<table border="1">
+		<tr>
+			<th>W/L</th>
+			<th>Opp</th>
+			<th>GF</th>
+			<th>GS</th>
+			<th>GA</th>
+			<th>GO</th>
+			<th>OG</th>
+			<th>OGO</th>
+			<th>A</th>
+			<th>AO</th>
+		</tr>
+		{% for game in series.game_stats %}
+			<tr>
+				{% if season.season.season.year < 2008 %}
+					<td><a href="/iaha/psgamepre2008/{{ game.game.id }}/">{{ game.outcome }}</a></td>
+				{% else %}
+					<td><a href="/iaha/psgame/{{ game.game.id }}/">{{ game.outcome }}</a></td>
+				{% endif %}
+				<td><a href="/iaha/player/{{ game.opponent.id }}/">{{ game.opponent }}</a></td>
+				<td>{{ game.gf }}</td>
+				<td>{{ game.gs }}</td>
+				<td>{{ game.ga }}</td>
+				<td>{{ game.go }}</td>
+				<td>{{ game.og }}</td>
+				<td>{{ game.ogo }}</td>
+				<td>{{ game.a }}</td>
+				<td>{{ game.ao }}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	{% endfor %}
+{% endfor %}
+</p>
