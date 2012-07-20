@@ -19,8 +19,8 @@ def games(request):
 
 def player_detail(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
-    stats = player.season_stats()
-    ps_stats = player.postseason_stats()
+    stats = player.career_stats()
+    ps_stats = player.postseason_career_stats()
     return render_to_response('iaha/player.html', {'player': player,
                                                    'stats': stats,
                                                    'ps_stats': ps_stats})

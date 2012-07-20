@@ -13,7 +13,8 @@ def g_rate(games, goals):
     try:
         return '%.2f' % round(float(goals) / games, 2)
     except:
-        return '.00'
+        return '0.00'
+
 
 class GameStats:
     player = None
@@ -174,7 +175,82 @@ class SeasonStats:
         self.gag = g_rate(self.g, self.ga)
         self.gog = g_rate(self.g, self.go)
         self.ogg = g_rate(self.g, self.og)
-        
+
+
+class CareerStats:
+    season_stats = None
+    player = None
+    p_seasons = a_seasons = 0
+    p_w = p_l = p_gf = p_ga = p_og = p_ogo = p_a = p_ao = 0
+    p_g = p_wpct = p_gs = p_go = p_gfg = p_gsg = p_gag = p_gog = p_ogg = 0
+    a_w = a_l = a_gf = a_ga = a_og = a_ogo = a_a = a_ao = 0
+    a_g = a_wpct = a_gs = a_go = a_gfg = a_gsg = a_gag = a_gog = a_ogg = 0
+    p_g_2007 = a_g_2007 = 0
+    
+    def __init__(self, player):
+        from models import PlayerLeagueBySeason
+        self.season_stats = []
+        self.player = player
+        for season in PlayerLeagueBySeason.objects.filter(player=player,
+                                                          league='P'
+                                                          ).order_by('season__year'):
+            s = SeasonStats(player, season.season)
+            if len(s.week_stats) > 0:
+                self.p_seasons += 1
+                self.season_stats.append(s)
+                self.p_w += s.w
+                self.p_l += s.l
+                self.p_gf += s.gf
+                self.p_ga += s.ga
+                self.p_og += s.og
+                self.p_a += s.a
+                if s.season.year > 2006:
+                    self.p_g_2007 += s.w + s.l
+                    self.p_ogo += s.ogo
+                    self.p_ao += s.ao
+                    self.p_gs += s.gs
+                    self.p_gsg = g_rate(self.p_g_2007, self.p_gs)
+        for season in PlayerLeagueBySeason.objects.filter(player=player,
+                                                          league='A'
+                                                          ).order_by('season__year'):
+            s = SeasonStats(player, season.season)
+            if len(s.week_stats) > 0:
+                self.a_seasons += 1
+                self.season_stats.append(s)
+                self.a_w += s.w
+                self.a_l += s.l
+                self.a_gf += s.gf
+                self.a_ga += s.ga
+                self.a_og += s.og
+                self.a_a += s.a
+                if s.season.year > 2006:
+                    self.a_g_2007 += s.w + s.l
+                    self.a_ogo += s.ogo
+                    self.a_ao += s.ao
+                    self.a_gs += s.gs
+                    self.a_gsg = g_rate(self.a_g_2007, self.a_gs)
+        self.p_g = self.p_w + self.p_l
+        self.p_wpct = win_pct(self.p_g, self.p_w)
+        self.p_go = self.p_ga - self.p_og
+        self.p_gfg = g_rate(self.p_g, self.p_gf)
+        self.p_gsg = g_rate(1, self.p_gsg)
+        self.p_gag = g_rate(self.p_g, self.p_ga)
+        self.p_gog = g_rate(self.p_g, self.p_go)
+        self.p_ogg = g_rate(self.p_g, self.p_og)
+        self.a_g = self.a_w + self.a_l
+        self.a_wpct = win_pct(self.a_g, self.a_w)
+        self.a_go = self.a_ga - self.a_og
+        self.a_gfg = g_rate(self.a_g, self.a_gf)
+        self.a_gsg = g_rate(1, self.a_gsg)
+        self.a_gag = g_rate(self.a_g, self.a_ga)
+        self.a_gog = g_rate(self.a_g, self.a_go)
+        self.a_ogg = g_rate(self.a_g, self.a_og)
+        if self.p_g_2007 == 0:
+            self.p_gs = self.p_ao = self.p_gsg = ' '
+        if self.a_g_2007 == 0:
+            self.a_gs = self.a_ao = self.a_gsg = ' '
+
+
 class PostSeasonGameStats:
     player = None
     game = None
@@ -214,7 +290,8 @@ class PostSeasonGameStats:
             pass # TODO: Crunch numbers for postseason games 2008+
         self.gs = self.gf - self.ogo
         self.go = self.ga - self.og
-        
+
+
 class PostSeasonSeriesStats:
     game_stats = None
     player = None
@@ -258,7 +335,8 @@ class PostSeasonSeriesStats:
         self.gag = g_rate(self.g, self.ga)
         self.gog = g_rate(self.g, self.go)
         self.ogg = g_rate(self.g, self.og)
-            
+
+
 class PostSeasonStats:
     series_stats = None
     player = None
@@ -287,6 +365,42 @@ class PostSeasonStats:
         self.gs = self.gf - self.ogo
         self.go = self.ga - self.og
         self.wpct = win_pct(self.g, self.w)
+        self.gfg = g_rate(self.g, self.gf)
+        self.gsg = g_rate(self.g, self.gs)
+        self.gag = g_rate(self.g, self.ga)
+        self.gog = g_rate(self.g, self.go)
+        self.ogg = g_rate(self.g, self.og)
+
+
+class PostSeasonCareerStats:
+    postseason_stats = None
+    player = None
+    w = l = gf = ga = og = ogo = a = ao = 0
+    g = wpct = gs = go = gfg = gsg = gag = gog = ogg = 0
+    
+    def __init__(self, player):
+        from models import PostSeason
+        self.postseason_stats = []
+        self.player = player
+        for season in PostSeason.objects.filter(Q(pro_champ=player) |
+                                                Q(pro2=player) |
+                                                Q(ama_champ_or_pro3=player)
+                                                ).order_by('season__year'):
+            s = PostSeasonStats(player, season)
+            if len(s.series_stats) > 0:
+                self.postseason_stats.append(s)
+                self.w += s.w
+                self.l += s.l
+                self.gf += s.gf
+                self.ga += s.ga
+                self.og += s.og
+                self.a += s.a
+                self.ogo += s.ogo
+                self.ao += s.ao
+                self.gs += s.gs
+        self.g = self.w + self.l
+        self.wpct = win_pct(self.g, self.w)
+        self.go = self.ga - self.og
         self.gfg = g_rate(self.g, self.gf)
         self.gsg = g_rate(self.g, self.gs)
         self.gag = g_rate(self.g, self.ga)

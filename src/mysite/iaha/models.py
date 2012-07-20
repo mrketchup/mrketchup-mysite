@@ -1,8 +1,7 @@
 from django.db import models
-from django.db.models import Q
 from datetime import date
 from common import years_between
-from stats import SeasonStats, PostSeasonStats
+from stats import CareerStats, PostSeasonCareerStats
 
 HAND_CHOICES = (
     ('L', 'Left'),
@@ -57,21 +56,11 @@ class Player(models.Model):
             return years_between(self.birth_date, endDate)
     age.short_description = 'Age'
     
-    def season_stats(self):
-        sstats = []
-        for season in PlayerLeagueBySeason.objects.filter(player=self):
-            s = SeasonStats(self, season.season)
-            if s.g > 0:
-                sstats.append(s)
-        return sstats
+    def career_stats(self):
+        return CareerStats(self)
     
-    def postseason_stats(self):
-        psstats = []
-        for season in PostSeason.objects.filter(Q(pro_champ=self) |
-                                                Q(pro2=self) |
-                                                Q(ama_champ_or_pro3=self)):
-            psstats.append(PostSeasonStats(self, season))
-        return psstats
+    def postseason_career_stats(self):
+        return PostSeasonCareerStats(self)
         
     def __unicode__(self):
         return self.full_name()
