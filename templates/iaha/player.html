@@ -211,51 +211,12 @@
 {% endfor %}
 </p>
 
-{% if ps_stats|length > 0 %}<h3>Post Season</h3>{% endif %}
-<p>
-<table border="1">
-<tr>
-	<th>Seasons</th>
-	<th>G</th>
-	<th>W</th>
-	<th>L</th>
-	<th>WPct</th>
-	<th>GF</th>
-	<th>GS</th>
-	<th>GA</th>
-	<th>GO</th>
-	<th>OG</th>
-	<th>GF/G</th>
-	<th>GS/G</th>
-	<th>GA/G</th>
-	<th>GO/G</th>
-	<th>OG/G</th>
-	<th>A</th>
-	<th>AO</th>
-</tr>
-<tr>
-	<td>{{ ps_stats.postseason_stats|length }}</td>
-	<td>{{ ps_stats.g }}</td>
-	<td>{{ ps_stats.w }}</td>
-	<td>{{ ps_stats.l }}</td>
-	<td>{{ ps_stats.wpct }}</td>
-	<td>{{ ps_stats.gf }}</td>
-	<td>{{ ps_stats.gs }}</td>
-	<td>{{ ps_stats.ga }}</td>
-	<td>{{ ps_stats.go }}</td>
-	<td>{{ ps_stats.og }}</td>
-	<td>{{ ps_stats.gfg }}</td>
-	<td>{{ ps_stats.gsg }}</td>
-	<td>{{ ps_stats.gag }}</td>
-	<td>{{ ps_stats.gog }}</td>
-	<td>{{ ps_stats.ogg }}</td>
-	<td>{{ ps_stats.a }}</td>
-	<td>{{ ps_stats.ao }}</td>
-</tr>
-{% for season in ps_stats.postseason_stats %}
+{% if ps_stats.postseason_stats|length > 0 %}
+	<h3>Post Season</h3>
+	<p>
 	<table border="1">
 	<tr>
-		<th>Year</th>
+		<th>Seasons</th>
 		<th>G</th>
 		<th>W</th>
 		<th>L</th>
@@ -274,29 +235,28 @@
 		<th>AO</th>
 	</tr>
 	<tr>
-		<td>{{ season.season.season.year }}</td>
-		<td>{{ season.g }}</td>
-		<td>{{ season.w }}</td>
-		<td>{{ season.l }}</td>
-		<td>{{ season.wpct }}</td>
-		<td>{{ season.gf }}</td>
-		<td>{{ season.gs }}</td>
-		<td>{{ season.ga }}</td>
-		<td>{{ season.go }}</td>
-		<td>{{ season.og }}</td>
-		<td>{{ season.gfg }}</td>
-		<td>{{ season.gsg }}</td>
-		<td>{{ season.gag }}</td>
-		<td>{{ season.gog }}</td>
-		<td>{{ season.ogg }}</td>
-		<td>{{ season.a }}</td>
-		<td>{{ season.ao }}</td>
+		<td>{{ ps_stats.postseason_stats|length }}</td>
+		<td>{{ ps_stats.g }}</td>
+		<td>{{ ps_stats.w }}</td>
+		<td>{{ ps_stats.l }}</td>
+		<td>{{ ps_stats.wpct }}</td>
+		<td>{{ ps_stats.gf }}</td>
+		<td>{{ ps_stats.gs }}</td>
+		<td>{{ ps_stats.ga }}</td>
+		<td>{{ ps_stats.go }}</td>
+		<td>{{ ps_stats.og }}</td>
+		<td>{{ ps_stats.gfg }}</td>
+		<td>{{ ps_stats.gsg }}</td>
+		<td>{{ ps_stats.gag }}</td>
+		<td>{{ ps_stats.gog }}</td>
+		<td>{{ ps_stats.ogg }}</td>
+		<td>{{ ps_stats.a }}</td>
+		<td>{{ ps_stats.ao }}</td>
 	</tr>
-	</table>
-	{% for series in season.series_stats %}
+	{% for season in ps_stats.postseason_stats %}
 		<table border="1">
 		<tr>
-			<th>Series</th>
+			<th>Year</th>
 			<th>G</th>
 			<th>W</th>
 			<th>L</th>
@@ -315,57 +275,99 @@
 			<th>AO</th>
 		</tr>
 		<tr>
-			<td>{{ series.series }}</td>
-			<td>{{ series.g }}</td>
-			<td>{{ series.w }}</td>
-			<td>{{ series.l }}</td>
-			<td>{{ series.wpct }}</td>
-			<td>{{ series.gf }}</td>
-			<td>{{ series.gs }}</td>
-			<td>{{ series.ga }}</td>
-			<td>{{ series.go }}</td>
-			<td>{{ series.og }}</td>
-			<td>{{ series.gfg }}</td>
-			<td>{{ series.gsg }}</td>
-			<td>{{ series.gag }}</td>
-			<td>{{ series.gog }}</td>
-			<td>{{ series.ogg }}</td>
-			<td>{{ series.a }}</td>
-			<td>{{ series.ao }}</td>
+			<td>{{ season.season.season.year }}</td>
+			<td>{{ season.g }}</td>
+			<td>{{ season.w }}</td>
+			<td>{{ season.l }}</td>
+			<td>{{ season.wpct }}</td>
+			<td>{{ season.gf }}</td>
+			<td>{{ season.gs }}</td>
+			<td>{{ season.ga }}</td>
+			<td>{{ season.go }}</td>
+			<td>{{ season.og }}</td>
+			<td>{{ season.gfg }}</td>
+			<td>{{ season.gsg }}</td>
+			<td>{{ season.gag }}</td>
+			<td>{{ season.gog }}</td>
+			<td>{{ season.ogg }}</td>
+			<td>{{ season.a }}</td>
+			<td>{{ season.ao }}</td>
 		</tr>
 		</table>
-		<table border="1">
-		<tr>
-			<th>W/L</th>
-			<th>Opp</th>
-			<th>GF</th>
-			<th>GS</th>
-			<th>GA</th>
-			<th>GO</th>
-			<th>OG</th>
-			<th>OGO</th>
-			<th>A</th>
-			<th>AO</th>
-		</tr>
-		{% for game in series.game_stats %}
+		{% for series in season.series_stats %}
+			<table border="1">
 			<tr>
-				{% if season.season.season.year < 2008 %}
-					<td><a href="/iaha/psgamepre2008/{{ game.game.id }}/">{{ game.outcome }}</a></td>
-				{% else %}
-					<td><a href="/iaha/psgame/{{ game.game.id }}/">{{ game.outcome }}</a></td>
-				{% endif %}
-				<td><a href="/iaha/player/{{ game.opponent.id }}/">{{ game.opponent }}</a></td>
-				<td>{{ game.gf }}</td>
-				<td>{{ game.gs }}</td>
-				<td>{{ game.ga }}</td>
-				<td>{{ game.go }}</td>
-				<td>{{ game.og }}</td>
-				<td>{{ game.ogo }}</td>
-				<td>{{ game.a }}</td>
-				<td>{{ game.ao }}</td>
+				<th>Series</th>
+				<th>G</th>
+				<th>W</th>
+				<th>L</th>
+				<th>WPct</th>
+				<th>GF</th>
+				<th>GS</th>
+				<th>GA</th>
+				<th>GO</th>
+				<th>OG</th>
+				<th>GF/G</th>
+				<th>GS/G</th>
+				<th>GA/G</th>
+				<th>GO/G</th>
+				<th>OG/G</th>
+				<th>A</th>
+				<th>AO</th>
 			</tr>
+			<tr>
+				<td>{{ series.series }}</td>
+				<td>{{ series.g }}</td>
+				<td>{{ series.w }}</td>
+				<td>{{ series.l }}</td>
+				<td>{{ series.wpct }}</td>
+				<td>{{ series.gf }}</td>
+				<td>{{ series.gs }}</td>
+				<td>{{ series.ga }}</td>
+				<td>{{ series.go }}</td>
+				<td>{{ series.og }}</td>
+				<td>{{ series.gfg }}</td>
+				<td>{{ series.gsg }}</td>
+				<td>{{ series.gag }}</td>
+				<td>{{ series.gog }}</td>
+				<td>{{ series.ogg }}</td>
+				<td>{{ series.a }}</td>
+				<td>{{ series.ao }}</td>
+			</tr>
+			</table>
+			<table border="1">
+			<tr>
+				<th>W/L</th>
+				<th>Opp</th>
+				<th>GF</th>
+				<th>GS</th>
+				<th>GA</th>
+				<th>GO</th>
+				<th>OG</th>
+				<th>OGO</th>
+				<th>A</th>
+				<th>AO</th>
+			</tr>
+			{% for game in series.game_stats %}
+				<tr>
+					{% if season.season.season.year < 2008 %}
+						<td><a href="/iaha/psgamepre2008/{{ game.game.id }}/">{{ game.outcome }}</a></td>
+					{% else %}
+						<td><a href="/iaha/psgame/{{ game.game.id }}/">{{ game.outcome }}</a></td>
+					{% endif %}
+					<td><a href="/iaha/player/{{ game.opponent.id }}/">{{ game.opponent }}</a></td>
+					<td>{{ game.gf }}</td>
+					<td>{{ game.gs }}</td>
+					<td>{{ game.ga }}</td>
+					<td>{{ game.go }}</td>
+					<td>{{ game.og }}</td>
+					<td>{{ game.ogo }}</td>
+					<td>{{ game.a }}</td>
+					<td>{{ game.ao }}</td>
+				</tr>
+			{% endfor %}
+			</table>
 		{% endfor %}
-		</table>
 	{% endfor %}
-{% endfor %}
-</p>
+	</p>
+{% endif %}
