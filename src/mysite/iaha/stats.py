@@ -260,7 +260,7 @@ class PostSeasonGameStats:
     gs = go = 0
     
     def __init__(self, player, game):
-        from models import PostSeasonGamePre2008, PostSeasonGame
+        from models import PostSeasonGamePre2008, PostSeasonGame, PostSeasonPlay
         if not game.player1 == player and not game.player2 == player:
             raise Exception(str(player) + ' is not in ' + str(game))
         self.player = player
@@ -287,7 +287,35 @@ class PostSeasonGameStats:
                 if game.winner() == 'p2':
                     self.outcome = 'W'
         elif type(game) is PostSeasonGame:
-            pass # TODO: Crunch numbers for postseason games 2008+
+            plays = PostSeasonPlay.objects.filter(game=game)
+            p1_g = p2_g = p1_a = p2_a = p1_og = p2_og = 0
+            for play in plays:
+                if play.code == '1G': p1_g += 1
+                elif play.code == '2G': p2_g += 1
+                elif play.code == '1A': p1_a += 1
+                elif play.code == '2A': p2_a += 1
+                elif play.code == '1OG': p1_og += 1
+                elif play.code == '2OG': p2_og += 1
+            if game.player1 == player:
+                self.opponent = game.player2
+                self.gf = p1_g + p1_a + p2_og
+                self.ga = p2_g + p2_a + p1_og
+                self.og = p1_og
+                self.ogo = p2_og
+                self.a = p1_a
+                self.ao = p2_a
+                if self.gf > self.ga:
+                    self.outcome = 'W'
+            else:
+                self.opponent = game.player1
+                self.gf = p2_g + p2_a + p1_og
+                self.ga = p1_g + p1_a + p2_og
+                self.og = p2_og
+                self.ogo = p1_og
+                self.a = p2_a
+                self.ao = p1_a
+                if self.gf > self.ga:
+                    self.outcome = 'W'
         self.gs = self.gf - self.ogo
         self.go = self.ga - self.og
 
@@ -301,7 +329,7 @@ class PostSeasonSeriesStats:
     g = wpct = gs = go = gfg = gsg = gag = gog = ogg = 0
     
     def __init__(self, player, series, season):
-        from models import PostSeasonGamePre2008
+        from models import PostSeasonGamePre2008, PostSeasonGame
         self.game_stats = []
         self.player = player
         self.series = series
@@ -325,7 +353,23 @@ class PostSeasonSeriesStats:
                 else:
                     self.l += 1
         else:
-            pass # TODO: Crunch numbers for series 2008+
+            for game in PostSeasonGame.objects.filter(Q(player1=player) |
+                                                      Q(player2=player),
+                                                      postseason=season,
+                                                      series=series,
+                                                      ).order_by('game_num'):
+                g = PostSeasonGameStats(player, game)
+                self.game_stats.append(g)
+                self.gf += g.gf
+                self.ga += g.ga
+                self.og += g.og
+                self.ogo += g.ogo
+                self.a += g.a
+                self.ao += g.ao
+                if g.outcome == 'W':
+                    self.w += 1
+                else:
+                    self.l += 1
         self.g = self.w + self.l
         self.wpct = win_pct(self.g, self.w)
         self.gs = self.gf - self.ogo
